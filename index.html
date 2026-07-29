@@ -1,0 +1,420 @@
+# Auto detect text files and perform LF normalization
+* text=auto
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Генератор идей для ТГ-канала</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+    }
+    body {
+      background: linear-gradient(145deg, #f6f9fc 0%, #e9f0f5 100%);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
+    .card {
+      max-width: 1100px;
+      width: 100%;
+      background: rgba(255,255,255,0.75);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      border-radius: 48px;
+      padding: 30px 30px 40px;
+      box-shadow: 0 20px 40px rgba(0,20,40,0.2), 0 8px 16px rgba(0,0,0,0.04);
+      border: 1px solid rgba(255,255,255,0.5);
+      transition: all 0.2s ease;
+    }
+    h1 {
+      font-size: 2rem;
+      font-weight: 700;
+      color: #0b2b3f;
+      letter-spacing: -0.01em;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 8px;
+    }
+    h1 small {
+      font-size: 0.9rem;
+      font-weight: 400;
+      color: #2d5a73;
+      background: rgba(45, 90, 115, 0.08);
+      padding: 4px 14px;
+      border-radius: 30px;
+      letter-spacing: 0.3px;
+    }
+    .subhead {
+      color: #1f4b5e;
+      margin-bottom: 30px;
+      font-size: 1rem;
+      border-left: 4px solid #3b8ba0;
+      padding-left: 16px;
+      background: rgba(59, 139, 160, 0.06);
+      border-radius: 0 20px 20px 0;
+      line-height: 1.4;
+    }
+    .generate-btn {
+      background: #1f5f77;
+      border: none;
+      color: white;
+      font-weight: 600;
+      font-size: 1.2rem;
+      padding: 16px 32px;
+      border-radius: 60px;
+      cursor: pointer;
+      transition: 0.2s;
+      box-shadow: 0 8px 18px rgba(26, 80, 102, 0.25);
+      width: 100%;
+      letter-spacing: 0.3px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      border: 1px solid rgba(255,255,255,0.3);
+    }
+    .generate-btn:hover {
+      background: #134a5e;
+      transform: scale(1.01);
+      box-shadow: 0 12px 24px rgba(18, 65, 84, 0.3);
+    }
+    .generate-btn:active {
+      transform: scale(0.97);
+    }
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+      margin-top: 32px;
+    }
+    .block {
+      background: white;
+      border-radius: 28px;
+      padding: 20px 18px 24px;
+      box-shadow: 0 6px 16px rgba(0, 20, 30, 0.06);
+      border: 1px solid rgba(200, 215, 225, 0.4);
+      transition: 0.15s;
+      height: fit-content;
+    }
+    .block:hover {
+      border-color: #a1c6d6;
+      box-shadow: 0 10px 24px rgba(0, 40, 60, 0.06);
+    }
+    .block h2 {
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: #123d4f;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      border-bottom: 2px dashed #c8dce6;
+      padding-bottom: 14px;
+      margin-bottom: 18px;
+    }
+    .block h2 span {
+      background: #e6f0f5;
+      border-radius: 40px;
+      font-size: 0.8rem;
+      padding: 2px 10px;
+      color: #135267;
+      margin-left: auto;
+      font-weight: 500;
+    }
+    .idea-item {
+      background: #f7fbfd;
+      border-radius: 18px;
+      padding: 14px 16px;
+      margin-bottom: 12px;
+      border-left: 4px solid #7db4c9;
+      transition: 0.1s;
+      font-size: 0.95rem;
+      line-height: 1.4;
+      color: #102b38;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.02);
+    }
+    .idea-item:last-child {
+      margin-bottom: 0;
+    }
+    .idea-item strong {
+      color: #115267;
+      font-weight: 600;
+      display: inline-block;
+      margin-right: 6px;
+    }
+    .plan-item {
+      background: #f3f9fe;
+      border-radius: 18px;
+      padding: 14px 16px;
+      margin-bottom: 12px;
+      border-left: 4px solid #3f8aa3;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .plan-item:last-child {
+      margin-bottom: 0;
+    }
+    .plan-day {
+      font-weight: 700;
+      color: #0a384b;
+      letter-spacing: 0.3px;
+      font-size: 0.9rem;
+    }
+    .plan-desc {
+      color: #1a4659;
+      font-size: 0.95rem;
+      padding-left: 6px;
+      border-left: 2px solid #b2d3e3;
+      padding-left: 12px;
+      margin-top: 2px;
+    }
+    .empty-state {
+      color: #6a8b9b;
+      font-style: italic;
+      text-align: center;
+      padding: 28px 10px;
+      background: #f3f8fb;
+      border-radius: 28px;
+      font-size: 0.95rem;
+    }
+    .footer-note {
+      margin-top: 30px;
+      text-align: right;
+      color: #2f637a;
+      font-size: 0.8rem;
+      opacity: 0.7;
+      border-top: 1px solid rgba(60, 120, 145, 0.1);
+      padding-top: 16px;
+      letter-spacing: 0.2px;
+    }
+
+    @media (max-width: 800px) {
+      .grid-3 {
+        grid-template-columns: 1fr;
+        gap: 20px;
+      }
+      .card {
+        padding: 20px 16px 28px;
+        border-radius: 32px;
+      }
+      h1 {
+        font-size: 1.6rem;
+      }
+    }
+    @media (max-width: 480px) {
+      .generate-btn {
+        font-size: 1rem;
+        padding: 14px 20px;
+      }
+      .block {
+        padding: 16px 14px;
+      }
+    }
+  </style>
+</head>
+<body>
+<div class="card">
+  <h1>
+    ✦ Генератор идей для ТГ
+    <small>посты + контент-план</small>
+  </h1>
+  <div class="subhead">
+    ⚡ 5 идей для изображений · 5 идей для текстов · контент-план на неделю
+  </div>
+
+  <button class="generate-btn" id="generateBtn">
+    <span>🌀</span> Сгенерировать идеи
+  </button>
+
+  <div class="grid-3" id="gridContainer">
+    <!-- Блок изображений -->
+    <div class="block" id="imageBlock">
+      <h2>🖼️ Изображения <span>5</span></h2>
+      <div id="imageList">
+        <div class="empty-state">Нажмите «Сгенерировать»</div>
+      </div>
+    </div>
+
+    <!-- Блок текстовых постов -->
+    <div class="block" id="textBlock">
+      <h2>📝 Текстовые посты <span>5</span></h2>
+      <div id="textList">
+        <div class="empty-state">Нажмите «Сгенерировать»</div>
+      </div>
+    </div>
+
+    <!-- Блок контент-плана -->
+    <div class="block" id="planBlock">
+      <h2>📅 Контент-план <span>7 дней</span></h2>
+      <div id="planList">
+        <div class="empty-state">Нажмите «Сгенерировать»</div>
+      </div>
+    </div>
+  </div>
+  <div class="footer-note">✨ идеи для Telegram-канала · обновляйте одним кликом</div>
+</div>
+
+<script>
+  (function() {
+    // ---------- БАЗЫ ДЛЯ ГЕНЕРАЦИИ ----------
+    const imageIdeas = [
+      "Фото «закат с цитатой» в пастельных тонах",
+      "Минималистичная графика с ключевым словом",
+      "Коллаж из 3 фото по теме поста",
+      "Иллюстрация в стиле скетч (ручная работа)",
+      "Фотография с крупным планом текста/книги",
+      "Абстрактный градиент с наложенным заголовком",
+      "Мотивационная карточка с ярким фоном",
+      "Фото «рабочее место/утро» с элементами",
+      "Инфографика в виде схемы или чек-листа",
+      "Комикс-стиль для лёгкой подачи",
+      "Фото еды/напитка с уютной атмосферой",
+      "Геометрический паттерн с текстом",
+      "Портрет (или стилизованный аватар) с эмоцией",
+      "Фото природы + вдохновляющая фраза",
+      "Тематический мем в фирменном стиле"
+    ];
+
+    const textIdeas = [
+      "История из жизни: как я нашел решение проблемы",
+      "Подборка из 5 полезных ресурсов по теме",
+      "Вопрос к аудитории: что вы думаете?",
+      "Короткая инструкция «как сделать за 5 минут»",
+      "Личное мнение о трендах в вашей нише",
+      "Список «10 вещей, которые я бы хотел знать раньше»",
+      "Анонс: что вас ждёт в канале на этой неделе",
+      "Разбор частой ошибки новичков",
+      "Цитата дня + ваш комментарий",
+      "Полезный лайфхак (простой и рабочий)",
+      "История успеха подписчика (анонимно)",
+      "Мини-тест или опрос для аудитории",
+      "Рефлексия: что я понял за последний месяц",
+      "Сравнение двух подходов/инструментов",
+      "Благодарность подписчикам + открытый вопрос"
+    ];
+
+    const planPrompts = [
+      "Понедельник: 📸 визуальная подборка + вопрос к аудитории",
+      "Вторник: 📝 полезный пост-инструкция (чек-лист)",
+      "Среда: 🧠 мем или шутка + интерактив",
+      "Четверг: 📊 аналитика / тренды в вашей нише",
+      "Пятница: 🎬 видео-обзор или короткий ролик",
+      "Суббота: 💬 история или кейс от подписчика",
+      "Воскресенье: 🌟 итоги недели + планы на следующую"
+    ];
+
+    // Дополнительные варианты для разнообразия (используем при генерации)
+    function getRandomItems(arr, count = 5) {
+      const shuffled = [...arr];
+      for (let i = shuffled.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+      }
+      return shuffled.slice(0, count);
+    }
+
+    function generateIdeas() {
+      // 1. Изображения: выбираем 5 уникальных
+      const imageSelection = getRandomItems(imageIdeas, 5);
+      // 2. Текстовые посты: выбираем 5 уникальных
+      const textSelection = getRandomItems(textIdeas, 5);
+      // 3. Контент-план: берём 7 пунктов (можно перемешивать или брать стандартные, но добавим вариативности)
+      // Используем базовые дни недели, но с дополнительной ротацией описаний из planPrompts + немного рандома
+      const basePlan = [
+        "Понедельник: 📸 визуальная подборка + вопрос к аудитории",
+        "Вторник: 📝 полезный пост-инструкция (чек-лист)",
+        "Среда: 🧠 мем или шутка + интерактив",
+        "Четверг: 📊 аналитика / тренды в вашей нише",
+        "Пятница: 🎬 видео-обзор или короткий ролик",
+        "Суббота: 💬 история или кейс от подписчика",
+        "Воскресенье: 🌟 итоги недели + планы на следующую"
+      ];
+      // Перемешаем и возьмём 7 (или оставим как есть, но можно разнообразить порядок)
+      const shuffledPlan = getRandomItems(basePlan, 7);
+      // Но чтобы сохранить дни недели по порядку, лучше оставить базовый порядок, но изменить описания
+      // сделаем так: возьмём 7 рандомных описаний из planPrompts (с повторами, чтобы было интереснее)
+      // но сохраним дни недели: ПН, ВТ, ... ВС
+      const days = ["Понедельник", "Вторник", "Среда", "Четверг", "Пятница", "Суббота", "Воскресенье"];
+      // Сгенерируем план с днями недели и случайными активностями
+      const planItems = days.map((day, idx) => {
+        // Берём случайный промпт из planPrompts + иногда добавляем уникальный текст
+        const base = planPrompts[Math.floor(Math.random() * planPrompts.length)];
+        // Разбиваем, чтобы заменить эмодзи или добавить вариативность
+        const emojis = ["📸", "📝", "🧠", "📊", "🎬", "💬", "🌟", "🔥", "✍️", "💡", "📌"];
+        const randomEmoji = emojis[Math.floor(Math.random() * emojis.length)];
+        // Создаём описание: день + активность
+        let activity = base;
+        // иногда меняем активность на что-то более специфичное (чтобы не повторялось)
+        if (Math.random() > 0.6) {
+          const extra = ["опрос", "розыгрыш", "прямой эфир", "подборка", "интервью", "челлендж"];
+          const extraPick = extra[Math.floor(Math.random() * extra.length)];
+          activity = `${randomEmoji} ${extraPick} + полезный контент`;
+        } else {
+          // меняем первую часть (эмодзи) на случайный
+          activity = activity.replace(/^[^\s]+/, randomEmoji);
+        }
+        return `${day}: ${activity}`;
+      });
+
+      // Отображаем в DOM
+      const imageList = document.getElementById('imageList');
+      const textList = document.getElementById('textList');
+      const planList = document.getElementById('planList');
+
+      // Очистка
+      imageList.innerHTML = '';
+      textList.innerHTML = '';
+      planList.innerHTML = '';
+
+      // Изображения
+      imageSelection.forEach((idea, index) => {
+        const div = document.createElement('div');
+        div.className = 'idea-item';
+        div.innerHTML = `<strong>${index+1}.</strong> ${idea}`;
+        imageList.appendChild(div);
+      });
+
+      // Текстовые посты
+      textSelection.forEach((idea, index) => {
+        const div = document.createElement('div');
+        div.className = 'idea-item';
+        div.innerHTML = `<strong>${index+1}.</strong> ${idea}`;
+        textList.appendChild(div);
+      });
+
+      // Контент-план (7 дней)
+      planItems.forEach((item, index) => {
+        const div = document.createElement('div');
+        div.className = 'plan-item';
+        // разделим на день и описание
+        const parts = item.split(': ');
+        if (parts.length === 2) {
+          const day = parts[0];
+          const desc = parts[1];
+          div.innerHTML = `<div class="plan-day">${day}</div><div class="plan-desc">${desc}</div>`;
+        } else {
+          // fallback
+          div.innerHTML = `<div class="plan-day">День ${index+1}</div><div class="plan-desc">${item}</div>`;
+        }
+        planList.appendChild(div);
+      });
+    }
+
+    // Добавляем обработчик на кнопку
+    document.getElementById('generateBtn').addEventListener('click', generateIdeas);
+
+    // Для красоты — при загрузке страницы сразу сгенерируем идеи
+    window.addEventListener('load', generateIdeas);
+  })();
+</script>
+</body>
+</html>
